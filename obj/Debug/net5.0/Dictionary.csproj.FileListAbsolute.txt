@@ -1,0 +1,16 @@
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\Dictionary.exe
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\Dictionary.deps.json
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\Dictionary.runtimeconfig.json
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\Dictionary.runtimeconfig.dev.json
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\Dictionary.dll
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\ref\Dictionary.dll
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\bin\Debug\net5.0\Dictionary.pdb
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.csproj.AssemblyReference.cache
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.AssemblyInfoInputs.cache
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.AssemblyInfo.cs
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.csproj.CoreCompileInputs.cache
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.dll
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\ref\Dictionary.dll
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.pdb
+C:\Users\kiril\RiderProjects\Dictionary\Dictionary\obj\Debug\net5.0\Dictionary.genruntimeconfig.cache
