@@ -6,100 +6,172 @@ using static System.Convert;
 
 namespace Dictionary
 {
+    /// <summary>
+    /// Класс персон, что имеет все данные, которые будут выводиться
+    /// </summary>
     public class Person
     {
-        private string _name;
-        private int _ages;
-        private int _height;
-        private string _birthday;
-        private string _placeOfBirth;
-        private DateTime _dateTime;
+        private readonly string _name;
+        private readonly int _age;
+        private readonly int _height;
+        private readonly string _birthday;
+        private readonly string _placeOfBirth;
+        private readonly DateTime _currentDate;
 
-        public static Person GenerateFromInput() //Создает все данные Person'a
+        /// <summary>
+        /// Конструктор класса персон
+        /// </summary>
+        /// <param name="currentDate"></param>
+        /// <param name="name"></param>
+        /// <param name="age"></param>
+        /// <param name="height"></param>
+        /// <param name="birthday"></param>
+        /// <param name="placeofBirth"></param>
+        public Person(DateTime currentDate, string name, int age, int height, string birthday, string placeofBirth)
         {
-            var person = new Person();
-
-            Console.WriteLine("Введите ФИО: ");
-            person._name = Console.ReadLine();          //Ввод на консоли задается в нейм
-            Console.WriteLine("Введите рост: ");
-            person._height = ToInt32(Console.ReadLine());  //Ввод на консоли задается в рост
-            Console.WriteLine("Введите дату рождения: ");
-            var birhdayDate = ToDateTime(Console.ReadLine());  //ввод на консоли задается в дату
-            person._birthday = birhdayDate.ToShortDateString();   //Присваиваем дату дате рождения
-            Console.WriteLine("Введите место рождения: ");
-            person._placeOfBirth = Console.ReadLine();         //Ввод места рождения
-
-            var birthdayDateInYear = birhdayDate.Year;      //присваеваем новой переменной год рождения
-            var yearNow = DateTime.Now.Year;                //Создаем переменную с годом нынешним
-            person._ages = yearNow - birthdayDateInYear;      //Считаем возраст с помощью вычитания года рождения из текущего
-            person._dateTime = DateTime.Now;                  //Присваиваем время создания Person'a
-            return person;                                    //Возвращаем данные Person'a
+            _name = name;
+            _age = age;
+            _height = height;
+            _birthday = birthday;
+            _placeOfBirth = placeofBirth;
+            _currentDate = currentDate;
         }
 
-        public string PrintInConsole() // Возвращает данные
+        /// <summary>
+        /// Возвращает строку с информацией о созданном персоне
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() =>
+            $"Дата добавления: {_currentDate} Имя: {_name} Возраст: {_age} Рост: {_height} Дата рождения: {_birthday} Город: {_placeOfBirth}";
+    }
+
+    /// <summary>
+    /// Класс PersonData задает данные через ввод консоли, которые в дальнейшем в ListPerson Передаст в Person'a
+    /// </summary>
+    public class PersonData
+    {
+        public string Name;
+        public int Age;
+        public int Height;
+        public string Birthday;
+        public string PlaceOfBirth;
+        public DateTime CurrentDate;
+        private DateTime _birthdayDate;
+
+        /// <summary>
+        /// тут происходит ввод консоли
+        /// </summary>
+        public void PersonDataInput()
         {
-            return
-                $"Дата добавления: {_dateTime} Имя: {_name} Возраст: {_ages} Рост: {_height} Дата рождения: {_birthday} Город: {_placeOfBirth}";
+            Name = Console.ReadLine();
+            Height = ToInt32(Console.ReadLine());
+            _birthdayDate = ToDateTime(Console.ReadLine());
+            Birthday = _birthdayDate.ToShortDateString();
+            PlaceOfBirth = Console.ReadLine();
+            CurrentDate = DateTime.Now;
+            Age = DateTime.Now.Year - _birthdayDate.Year;
         }
     }
 
-    internal class Program
+    /// <summary>
+    /// Класс Лист персон имеет лист и выполняет все вычисления для дальнейшейго вывода на экран
+    /// </summary>
+    public static class ListPerson
     {
-        public static void Main(string[] args)
+        private static readonly List<Person> Members = new List<Person>(); //Инициализируем лист
+        private static readonly PersonData PersonData = new PersonData(); //Инициализируем записную книжку
+        public static string TextOutput; //Инициализируем вывод информации
+
+        /// <summary>
+        /// Генерируем данные для вывода в консоль
+        /// </summary>
+        public static void GeneratePersonInConsole()
         {
-            Console.WriteLine("1 - Вписать данные в консоль.\n2 - Вписать данные в файл."); 
-            var input = Console.ReadKey().Key;
-            switch (input)
+            PersonData.PersonDataInput(); //Вводим данные
+            Members.Add(new Person(PersonData.CurrentDate, PersonData.Name, PersonData.Age, PersonData.Height,
+                PersonData.Birthday, PersonData.PlaceOfBirth)); //Добавляем данные новому персону
+            foreach (var mem in Members) //Проходимся по всем персонам в листе
             {
-                case ConsoleKey.D1: 
-                    OnConsoleClick();
-                    break;
-                case ConsoleKey.D2: 
-                    OnFileClick();
-                    break;
+                var indexMember = Members.IndexOf(mem) + 1; //Задаем номер в таблице
+                var memInfo = mem.ToString(); //присваиваем данные персона
+                TextOutput = indexMember + " " + memInfo; //Присваиваем данные + номер
             }
         }
 
+        /// <summary>
+        /// Генерируем данные для вывода в файл
+        /// </summary>
+        public static void GeneratePersonInFile()
+        {
+            int indexMember; //Инициализируем порядковый номер
+            if (File.Exists("db.txt") && File.ReadLines("db.txt").Any()) //Если файл найден и есть строки
+                indexMember = int.Parse(File.ReadAllLines("db.txt").Last(x => true).Split(" ").First()) +
+                              1; //читаем все строки в документе, находим последний, делим на пробелы, находим первый символ, добавляем +1
+            else
+                indexMember = 1; //В противном случае номер равен 1
+
+            PersonData.PersonDataInput(); //Создаем персона
+            var memInfo = new Person(PersonData.CurrentDate, PersonData.Name, PersonData.Age, PersonData.Height,
+                PersonData.Birthday, PersonData.PlaceOfBirth).ToString(); //Присваиваем его данные меминфо
+            TextOutput = indexMember + " " + memInfo; //Присваиваем данные + номер
+        }
+    }
+
+
+    /// <summary>
+    /// Класс через который будет выводиться программа
+    /// </summary>
+    internal static class Program
+    {
+        /// <summary>
+        /// Основной мейн
+        /// </summary>
+        /// <param name="args"></param>
+        public static void Main(string[] args)
+        {
+            Console.WriteLine("1 - Вписать данные в консоль.\n2 - Вписать данные в файл.");
+            var input = Console.ReadKey().Key;
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    OnConsoleClick();
+                    break;
+                case ConsoleKey.D2:
+                    OnFileClick();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Вывод программы в консоль
+        /// </summary>
         private static void OnConsoleClick()
         {
-            var members = new List<Person>(); //Создаем лист
             do //Выполняем до выхода из программы
             {
-                Console.Clear();  
-                var person = Person.GenerateFromInput(); //Создаем персона
-                members.Add(person); //Добавляем в лист
-                foreach (var mem in members) //Проходимся по всем персонам в листе
-                {
-                    var indexMember = members.IndexOf(mem) + 1; //Задаем номер в таблице
-                    var memInfo = mem.PrintInConsole(); //присваиваем данные персона
-                    var stringer = indexMember + " " + memInfo; //Присваиваем данные + номер
-                    Console.WriteLine(stringer); //Выводим
-                }
+                Console.Clear(); //Очищаем консоль
+                ListPerson.GeneratePersonInConsole(); //Генерируем нового персона в консоль
+                Console.WriteLine(ListPerson.TextOutput); //Выводим информаци. на экран
 
                 Console.WriteLine("1 - Вписать нового участника\nДля выхода нажмите любую другую кнопку");
             } while (Console.ReadKey().Key == ConsoleKey.D1);
         }
 
+        /// <summary>
+        /// Вывод программы в файл
+        /// </summary>
         private static void OnFileClick()
         {
-            var members = new List<Person>(); //Создаем лист
-
-            do //Выполняем до выхода
+            do //Выполняем до выхода из программы
             {
-                Console.Clear();  
-                int indexMember; //Инициализируем порядковый номер
-                if (File.Exists("db.txt") && File.ReadLines("db.txt").Any()) //Если файл найден и есть строки
-                    indexMember = int.Parse(File.ReadAllLines("db.txt").Last(x => true).Split(" ").First()) +
-                                  1; //читаем все строки в документе, находим последний, делим на пробелы, находим первый символ, добавляем +1
-                else
-                    indexMember = 1; //В противном случае номер равен 1
+                Console.Clear(); //Очищаем консоль
+                ListPerson.GeneratePersonInFile(); //Генерируем нового персона для файла
+
                 var streamWriter =
                     new StreamWriter("db.txt", true); //Запускаем стримрайтер для записи\дозаписи\создания
-                var person = Person.GenerateFromInput(); //Создаем персона
-                members.Add(person); //Добавляем его в список
-                var memInfo = person.PrintInConsole(); //Присваиваем его данные меминфо
-                var stringer = indexMember + " " + memInfo; //Присваиваем данные + номер
-                streamWriter.WriteLine(stringer); //Записываем в документ
+                streamWriter.WriteLine(ListPerson.TextOutput); //Записываем в документ
                 streamWriter.Close(); //Закрываем документ
 
                 Console.WriteLine("1 - Вписать нового участника\nДля выхода нажмите любую другую кнопку");

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\kiril\\RiderProjects\\Dictionary\\Dictionary\\Dictionary.csproj",
+      "projectUniqueName": "D:\\Git\\Labyrinth\\EasyDatabase\\Dictionary.csproj",
       "projectName": "Dictionary",
-      "projectPath": "C:\\Users\\kiril\\RiderProjects\\Dictionary\\Dictionary\\Dictionary.csproj",
+      "projectPath": "D:\\Git\\Labyrinth\\EasyDatabase\\Dictionary.csproj",
       "packagesPath": "C:\\Users\\kiril\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\kiril\\RiderProjects\\Dictionary\\Dictionary\\obj\\",
+      "outputPath": "D:\\Git\\Labyrinth\\EasyDatabase\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\kiril\\AppData\\Roaming\\NuGet\\NuGet.Config",
