@@ -10,8 +10,8 @@ namespace Dictionary
     /// </summary>
     public static class Notebook
     {
-        private static List<Person> Members = new List<Person>(); //Инициализируем лист
-        private static PersonData PersonData = new PersonData(); //Инициализируем записную книжку
+        private static List<Person> _members = new List<Person>(); //Инициализируем лист
+        private static readonly PersonData PersonData = new PersonData(); //Инициализируем записную книжку
         public static string TextOutput; //Инициализируем вывод информации
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace Dictionary
         public static void WriteInFile()
         {
             var streamWriter = new StreamWriter("db.txt");
-            for (var i = 0; i < Members.Count; i++)
+            for (var i = 0; i < _members.Count; i++)
             {
-                streamWriter.WriteLine(Members[i].ToString());
+                streamWriter.WriteLine(_members[i].ToString());
             }
 
             streamWriter.Close();
@@ -52,7 +52,7 @@ namespace Dictionary
         /// <param name="id">Вписываемый айди</param>
         public static string ReadPersonsInFile(int id)
         {
-            return Members[id].ToString();
+            return _members[id].ToString();
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace Dictionary
         /// </summary>
         public static void OutputListPerson()
         {
-            for (var i = 0; i < Members.Count; i++)
+            for (var i = 0; i < _members.Count; i++)
             {
-                Console.WriteLine(Members[i]);
+                Console.WriteLine(_members[i]);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Dictionary
         /// <param name="id">вписываемый айди</param>
         public static void RemovePerson(int id)
         {
-            Members.RemoveAt(id);
+            _members.RemoveAt(id);
             SetNewIdPersons();
         }
 
@@ -83,7 +83,7 @@ namespace Dictionary
         public static void ChangePerson(int id)
         {
             PersonData.PersonDataInput();
-            Members[id] = new Person(id + 1, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
+            _members[id] = new Person(id + 1, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
                 PersonData.Height, PersonData.Birthday, PersonData.PlaceOfBirth);
         }
 
@@ -96,11 +96,11 @@ namespace Dictionary
         public static string GetChosenDates(DateTime x, DateTime y)
         {
             string s = null;
-            for (var i = 0; i < Members.Count; i++)
+            for (var i = 0; i < _members.Count; i++)
             {
-                if (Members[i].CurrentDate >= x && Members[i].CurrentDate <= y)
+                if (_members[i].CurrentDate >= x && _members[i].CurrentDate <= y)
                 {
-                    s += Members[i].ToString() + "\n";
+                    s += _members[i].ToString() + "\n";
                 }
             }
 
@@ -112,7 +112,8 @@ namespace Dictionary
         /// </summary>
         public static void ListSorting()
         {
-            Members = Members.OrderBy(x => x.CurrentDate).ToList();
+            _members = _members.OrderBy(x => x.CurrentDate).ToList();
+            SetNewIdPersons();
             OutputListPerson();
         }
 
@@ -121,7 +122,8 @@ namespace Dictionary
         /// </summary>
         public static void ListSortingDescending()
         {
-            Members = Members.OrderByDescending(x => x.CurrentDate).ToList();
+            _members = _members.OrderByDescending(x => x.CurrentDate).ToList();
+            SetNewIdPersons();
             OutputListPerson();
         }
 
@@ -144,7 +146,7 @@ namespace Dictionary
                 PersonData.PlaceOfBirth = data[6];
 
 
-                Members.Add(new Person(PersonData.Id, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
+                _members.Add(new Person(PersonData.Id, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
                     PersonData.Height, PersonData.Birthday, PersonData.PlaceOfBirth));
             }
         }
@@ -154,9 +156,9 @@ namespace Dictionary
         /// </summary>
         private static void SetNewIdPersons()
         {
-            for (var i = 0; i < Members.Count; i++)
+            for (var i = 0; i < _members.Count; i++)
             {
-                Members[i].Id = i + 1;
+                _members[i].Id = i + 1;
             }
         }
     }
