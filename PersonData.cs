@@ -7,6 +7,7 @@ namespace Dictionary
     /// </summary>
     public class PersonData
     {
+        public int Id = 1;
         public string Name;
         public int Age;
         public int Height;
@@ -20,10 +21,14 @@ namespace Dictionary
         /// </summary>
         public void PersonDataInput()
         {
+            Console.WriteLine("Введите ФИО:");
             Name = Console.ReadLine();
+            Console.WriteLine("Введите рост:");
             Height = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите дату рождения:");
             _birthdayDate = Convert.ToDateTime(Console.ReadLine());
             Birthday = _birthdayDate.ToShortDateString();
+            Console.WriteLine("Введите место рождения:");
             PlaceOfBirth = Console.ReadLine();
             CurrentDate = DateTime.Now;
             Age = DateTime.Now.Year - _birthdayDate.Year;
