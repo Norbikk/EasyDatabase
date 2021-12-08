@@ -19,6 +19,7 @@ namespace Dictionary
             {
                 case ConsoleKey.D1:
                     OutputPersonById();
+                    Notebook.WriteInFile("db.txt");
                     break;
                 case ConsoleKey.D2:
                     WriteFromConsoleInFile("db.txt");
@@ -28,12 +29,13 @@ namespace Dictionary
                     break;
                 case ConsoleKey.D4:
                     OutputPersons();
+                    Notebook.WriteInFile("db.txt");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            Notebook.WriteInFile("db.txt");
+            
         }
 
         /// <summary>

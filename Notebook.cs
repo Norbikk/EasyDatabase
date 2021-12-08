@@ -165,7 +165,7 @@ namespace Dictionary
             Console.WriteLine("Введите место рождения:");
             person.PlaceOfBirth = Console.ReadLine();
             person.CurrentDate = DateTime.Now;
-            person.Age = DateTime.Now.Year - birthdayDate.Year;
+            person.Age = person.CurrentDate.Year - birthdayDate.Year;
 
             return person;
         }
