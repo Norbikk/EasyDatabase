@@ -102,8 +102,8 @@ namespace Dictionary
         /// </summary>
         private static void OutputPersons()
         {
-            var s = Notebook.OutputListPerson();
-            Console.WriteLine(s);
+            var firstOutput = Notebook.OutputListPerson();
+            Console.WriteLine(firstOutput);
             Console.WriteLine("1- Сортировать по возрастанию\n2-Сортировать по убыванию");
             var input = Console.ReadKey().Key;
             switch (input)
@@ -116,7 +116,10 @@ namespace Dictionary
                     break;
             }
 
-            Console.WriteLine(s);
+            var lastoutput = Notebook.OutputListPerson();
+            Console.WriteLine(lastoutput);
+
+
         }
 
 
