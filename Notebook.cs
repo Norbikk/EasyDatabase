@@ -5,39 +5,36 @@ using System.Linq;
 
 namespace Dictionary
 {
-    /// <summary>
-    /// Класс Лист персон имеет лист и выполняет все вычисления для дальнейшейго вывода на экран
-    /// </summary>
-    public static class Notebook
+    public class Notebook
     {
         private static List<Person> _members = new List<Person>(); //Инициализируем лист
-        private static readonly PersonData PersonData = new PersonData(); //Инициализируем записную книжку
-        public static string TextOutput; //Инициализируем вывод информации
+        private const string Separator = "#";
 
         /// <summary>
-        /// Генерируем данные для вывода в файл
+        /// Генерирует данные из консоли для дальнейшего использования
         /// </summary>
-        public static void GeneratePersonInFile()
+        /// <param name="path">путь к файлу</param>
+        /// <returns></returns>
+        public static string GeneratePersons(string path)
         {
-            if (File.Exists("db.txt") && File.ReadLines("db.txt").Any()) //Если файл найден и есть строки
-                PersonData.Id = int.Parse(File.ReadAllLines("db.txt").Last(x => true).Split("#").First()) +
-                                1; //читаем все строки в документе, находим последний, делим на пробелы, находим первый символ, добавляем +1
+            var person = PersonDataInput();
+            if (File.Exists(path) && File.ReadLines(path).Any()) //Если файл найден и есть строки
+                person.Id = int.Parse(File.ReadAllLines(path).Last(x => true).Split(Separator).First()) +
+                            1; //читаем все строки в документе, находим последний, делим на пробелы, находим первый символ, добавляем +1
             else
-                PersonData.Id = 1; //В противном случае номер равен 1
+                person.Id = 1; //В противном случае номер равен 1
 
-            PersonData.PersonDataInput(); //Создаем персона
-            var memInfo = new Person(PersonData.Id, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
-                PersonData.Height,
-                PersonData.Birthday, PersonData.PlaceOfBirth).ToString(); //Присваиваем его данные меминфо
-            TextOutput = memInfo; //Присваиваем данные + номер
+            var memInfo = new Person(person); //Присваиваем его данные меминфо
+            return memInfo.ToString(); //Присваиваем данные + номер
         }
 
         /// <summary>
         /// Записывает полученный результат в файл
         /// </summary>
-        public static void WriteInFile()
+        /// <param name="path">путь к файлу</param>
+        public static void WriteInFile(string path)
         {
-            var streamWriter = new StreamWriter("db.txt");
+            var streamWriter = new StreamWriter(path);
             for (var i = 0; i < _members.Count; i++)
             {
                 streamWriter.WriteLine(_members[i].ToString());
@@ -50,30 +47,23 @@ namespace Dictionary
         /// Выводит информацию нужного персона
         /// </summary>
         /// <param name="id">Вписываемый айди</param>
-        public static string ReadPersonsInFile(int id)
+        public static string OutputPersonInfo(int id)
         {
             return _members[id].ToString();
         }
 
         /// <summary>
-        /// Выводит весь лист персонов, только не знаю как это сделать без вывода в консоль..
+        /// Выводит весь лист персонов
         /// </summary>
-        public static void OutputListPerson()
+        public static string OutputListPerson()
         {
+            string s = null;
             for (var i = 0; i < _members.Count; i++)
             {
-                Console.WriteLine(_members[i]);
+                s += _members[i] + "\n";
             }
-        }
 
-        /// <summary>
-        /// Удаляем выбранного персона из листа
-        /// </summary>
-        /// <param name="id">вписываемый айди</param>
-        public static void RemovePerson(int id)
-        {
-            _members.RemoveAt(id);
-            SetNewIdPersons();
+            return s;
         }
 
         /// <summary>
@@ -82,23 +72,33 @@ namespace Dictionary
         /// <param name="id">Вписываемый айди</param>
         public static void ChangePerson(int id)
         {
-            PersonData.PersonDataInput();
-            _members[id] = new Person(id + 1, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
-                PersonData.Height, PersonData.Birthday, PersonData.PlaceOfBirth);
+            var person = PersonDataInput();
+            person.Id = id + 1;
+            _members[id] = new Person(person);
+        }
+
+        /// <summary>
+        /// Удаляет человека и перенумировывает
+        /// </summary>
+        /// <param name="id">вписываемый айди</param>
+        public static void RemoveAndSetID(int id)
+        {
+            RemovePerson(id);
+            SetNewIdPersons();
         }
 
         /// <summary>
         /// Выборка диапазона дат
         /// </summary>
-        /// <param name="x">Начальная дата</param>
-        /// <param name="y">Конечная дата</param>
+        /// <param name="startTime">Начальная дата</param>
+        /// <param name="endTime">Конечная дата</param>
         /// <returns></returns>
-        public static string GetChosenDates(DateTime x, DateTime y)
+        public static string GetChosenDates(DateTime startTime, DateTime endTime)
         {
             string s = null;
             for (var i = 0; i < _members.Count; i++)
             {
-                if (_members[i].CurrentDate >= x && _members[i].CurrentDate <= y)
+                if (_members[i].CurrentDate >= startTime && _members[i].CurrentDate <= endTime)
                 {
                     s += _members[i].ToString() + "\n";
                 }
@@ -108,51 +108,95 @@ namespace Dictionary
         }
 
         /// <summary>
+        /// Выгружаем из файла в лист
+        /// </summary>
+        public static void AddPersonsFromFile(string path)
+        {
+            var person = new PersonData();
+            string[] lines = File.ReadAllLines(path);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] data = lines[i].Split(Separator);
+
+                person.Id = Convert.ToInt32(data[0]);
+                person.CurrentDate = Convert.ToDateTime(data[1]);
+                person.Name = data[2];
+                person.Age = Convert.ToInt32(data[3]);
+                person.Height = Convert.ToInt32(data[4]);
+                person.Birthday = data[5];
+                person.PlaceOfBirth = data[6];
+
+                _members.Add(new Person(person));
+            }
+        }
+
+        /// <summary>
+        /// Берет отсортированный по возрастанию лист с новыми ID
+        /// </summary>
+        public static void GetSortedList()
+        {
+            ListSorting();
+            SetNewIdPersons();
+        }
+
+        /// <summary>
+        /// Берет отсортированный по убыванию лист с новыми ID
+        /// </summary>
+        public static void GetSortedListDescend()
+        {
+            ListSortingDescending();
+            SetNewIdPersons();
+        }
+
+        /// <summary>
+        /// Ввод нового человека с консоли
+        /// </summary>
+        /// <returns></returns>
+        private static PersonData PersonDataInput()
+        {
+            var person = new PersonData();
+            Console.WriteLine("Введите ФИО:");
+            person.Name = Console.ReadLine();
+            Console.WriteLine("Введите рост:");
+            person.Height = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите дату рождения:");
+            DateTime birthdayDate = Convert.ToDateTime(Console.ReadLine());
+            person.Birthday = birthdayDate.ToShortDateString();
+            Console.WriteLine("Введите место рождения:");
+            person.PlaceOfBirth = Console.ReadLine();
+            person.CurrentDate = DateTime.Now;
+            person.Age = DateTime.Now.Year - birthdayDate.Year;
+
+            return person;
+        }
+
+        /// <summary>
+        /// Удаляет выбранного человека из листа
+        /// </summary>
+        /// <param name="id">вписываемый айди</param>
+        private static void RemovePerson(int id)
+        {
+            _members.RemoveAt(id);
+        }
+
+        /// <summary>
         /// Сортировка по возрастанию
         /// </summary>
-        public static void ListSorting()
+        private static void ListSorting()
         {
             _members = _members.OrderBy(x => x.CurrentDate).ToList();
-            SetNewIdPersons();
-            OutputListPerson();
         }
 
         /// <summary>
         /// Сортировка по убыванию
         /// </summary>
-        public static void ListSortingDescending()
+        private static void ListSortingDescending()
         {
             _members = _members.OrderByDescending(x => x.CurrentDate).ToList();
-            SetNewIdPersons();
-            OutputListPerson();
         }
 
         /// <summary>
-        /// Выгружаем из файла в лист
-        /// </summary>
-        public static void AddPersonFromFileInList()
-        {
-            string[] lines = File.ReadAllLines("db.txt");
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string[] data = lines[i].Split("#");
-
-                PersonData.Id = Convert.ToInt32(data[0]);
-                PersonData.CurrentDate = Convert.ToDateTime(data[1]);
-                PersonData.Name = data[2];
-                PersonData.Age = Convert.ToInt32(data[3]);
-                PersonData.Height = Convert.ToInt32(data[4]);
-                PersonData.Birthday = data[5];
-                PersonData.PlaceOfBirth = data[6];
-
-
-                _members.Add(new Person(PersonData.Id, PersonData.CurrentDate, PersonData.Name, PersonData.Age,
-                    PersonData.Height, PersonData.Birthday, PersonData.PlaceOfBirth));
-            }
-        }
-
-        /// <summary>
-        /// Выдаем новые айдишники
+        /// Выдает новые ID
         /// </summary>
         private static void SetNewIdPersons()
         {

@@ -3,31 +3,28 @@ using System.IO;
 
 namespace Dictionary
 {
-    /// <summary>
-    /// Класс через который будет выводиться программа
-    /// </summary>
-    internal static class Program
+    internal class Program
     {
         /// <summary>
-        /// Основной мейн
+        /// Входная точка программы
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            Notebook.AddPersonFromFileInList();
+            Notebook.AddPersonsFromFile("db.txt");
             Console.WriteLine(
-                "1 - Вывести на экран человека по id.\n2 - Вписать данные в файл. \n3 - Выбрать диапазон дат. \n4 - Вывести список");
+                "1 - Вывести на экран человека по ID.\n2 - Вписать данные в файл. \n3 - Выбрать диапазон дат. \n4 - Вывести список");
             var input = Console.ReadKey().Key;
             switch (input)
             {
                 case ConsoleKey.D1:
-                    OutputFromFileDataInConsole();
+                    OutputPersonById();
                     break;
                 case ConsoleKey.D2:
-                    OnFileClick();
+                    WriteFromConsoleInFile("db.txt");
                     break;
                 case ConsoleKey.D3:
-                    ChosenDates();
+                    ChooseDateSpan();
                     break;
                 case ConsoleKey.D4:
                     OutputPersons();
@@ -35,33 +32,41 @@ namespace Dictionary
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            Notebook.WriteInFile("db.txt");
         }
 
         /// <summary>
-        /// Выбранные даты
+        /// Вывод программы в файл
         /// </summary>
-        private static void ChosenDates()
+        private static void WriteFromConsoleInFile(string path)
         {
-            Console.WriteLine("Введите начальную дату");
-            DateTime x = Convert.ToDateTime(Console.ReadLine());
-            Console.WriteLine("Введите конечную дату");
-            DateTime y = Convert.ToDateTime(Console.ReadLine());
-            var s = Notebook.GetChosenDates(x, y);
-            Console.WriteLine(s);
+            do //Выполняем до выхода из программы
+            {
+                Console.Clear(); //Очищаем консоль
+                var s = Notebook.GeneratePersons(path); //Генерируем нового персона для файла
+
+                var streamWriter =
+                    new StreamWriter(path, true); //Запускаем стримрайтер для записи\дозаписи\создания
+                streamWriter.WriteLine(s); //Записываем в документ
+                streamWriter.Close(); //Закрываем документ
+
+                Console.WriteLine("1 - Вписать нового участника\nДля выхода нажмите любую другую кнопку");
+            } while (Console.ReadKey().Key == ConsoleKey.D1);
         }
 
         /// <summary>
         /// Основной метод вывода в консоль информации по ячейке
         /// </summary>
-        private static void OutputFromFileDataInConsole()
+        private static void OutputPersonById()
         {
-            Console.WriteLine("Введите айди который вывести");
+            Console.WriteLine("Введите ID который вывести");
             int id = Convert.ToInt32(Console.ReadLine()) - 1;
-            string result = Notebook.ReadPersonsInFile(id);
+            string result = Notebook.OutputPersonInfo(id);
             Console.WriteLine(result);
 
 
-            Console.WriteLine("1-Редактировать данную ячейку\n2-Удалить данную ячейку\n3-Вывести таблицу");
+            Console.WriteLine("1-Редактировать данного человека\n2-Удалить данного человека\n3-Вывести таблицу");
             var input = Console.ReadKey().Key;
             switch (input)
             {
@@ -69,33 +74,47 @@ namespace Dictionary
                     Notebook.ChangePerson(id);
                     break;
                 case ConsoleKey.D2:
-                    AskRemoveOrNo(id);
+                    AskRemoveOrNot(id);
                     break;
                 case ConsoleKey.D3:
                     AskOutputInfo();
                     break;
             }
-
-            Notebook.WriteInFile();
         }
 
         /// <summary>
-        /// Вывод программы в файл
+        /// Выбранные даты
         /// </summary>
-        private static void OnFileClick()
+        private static void ChooseDateSpan()
         {
-            do //Выполняем до выхода из программы
+            Console.WriteLine("Введите начальную дату");
+            DateTime startTime = Convert.ToDateTime(Console.ReadLine());
+            Console.WriteLine("Введите конечную дату");
+            DateTime endTime = Convert.ToDateTime(Console.ReadLine());
+            var s = Notebook.GetChosenDates(startTime, endTime);
+            Console.WriteLine(s);
+        }
+
+        /// <summary>
+        /// Выводит лист и сортирует по нажатию
+        /// </summary>
+        private static void OutputPersons()
+        {
+            var s = Notebook.OutputListPerson();
+            Console.WriteLine(s);
+            Console.WriteLine("1- Сортировать по возрастанию\n2-Сортировать по убыванию");
+            var input = Console.ReadKey().Key;
+            switch (input)
             {
-                Console.Clear(); //Очищаем консоль
-                Notebook.GeneratePersonInFile(); //Генерируем нового персона для файла
+                case ConsoleKey.D1:
+                    Notebook.GetSortedList();
+                    break;
+                case ConsoleKey.D2:
+                    Notebook.GetSortedListDescend();
+                    break;
+            }
 
-                var streamWriter =
-                    new StreamWriter("db.txt", true); //Запускаем стримрайтер для записи\дозаписи\создания
-                streamWriter.WriteLine(Notebook.TextOutput); //Записываем в документ
-                streamWriter.Close(); //Закрываем документ
-
-                Console.WriteLine("1 - Вписать нового участника\nДля выхода нажмите любую другую кнопку");
-            } while (Console.ReadKey().Key == ConsoleKey.D1);
+            Console.WriteLine(s);
         }
 
 
@@ -103,13 +122,13 @@ namespace Dictionary
         /// Спрашивает удалить ли позицию
         /// </summary>
         /// <param name="id">номер позиции</param>
-        private static void AskRemoveOrNo(int id)
+        private static void AskRemoveOrNot(int id)
         {
             Console.WriteLine("Удалить? Y/N");
             var consoleKeyInfo = Console.ReadKey().Key;
             if (consoleKeyInfo == ConsoleKey.Y)
             {
-                Notebook.RemovePerson(id);
+                Notebook.RemoveAndSetID(id);
                 Console.WriteLine("\nДанный человек удален из списка");
             }
 
@@ -125,29 +144,9 @@ namespace Dictionary
             var consoleKeyInfo = Console.ReadKey().Key;
             if (consoleKeyInfo == ConsoleKey.Y)
             {
-                Notebook.OutputListPerson();
+                var s = Notebook.OutputListPerson();
+                Console.WriteLine(s);
             }
-        }
-
-        /// <summary>
-        /// Выводит лист и сортирует по нажатию
-        /// </summary>
-        private static void OutputPersons()
-        {
-            Notebook.OutputListPerson();
-            Console.WriteLine("1- Сортировать по возрастанию\n2-Сортировать по убыванию");
-            var inputkey = Console.ReadKey().Key;
-            switch (inputkey)
-            {
-                case ConsoleKey.D1:
-                    Notebook.ListSorting();
-                    break;
-                case ConsoleKey.D2:
-                    Notebook.ListSortingDescending();
-                    break;
-            }
-
-            Notebook.WriteInFile();
         }
     }
 }

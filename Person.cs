@@ -7,8 +7,8 @@ namespace Dictionary
     /// </summary>
     public class Person
     {
-        public int Id { get; set; }
-        public DateTime CurrentDate { get; }
+        public int Id;
+        public DateTime CurrentDate;
         private readonly string _name;
         private readonly int _age;
         private readonly int _height;
@@ -19,22 +19,23 @@ namespace Dictionary
         /// <summary>
         /// Конструктор класса персон
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="currentDate"></param>
-        /// <param name="name"></param>
-        /// <param name="age"></param>
-        /// <param name="height"></param>
-        /// <param name="birthday"></param>
-        /// <param name="placeofBirth"></param>
-        public Person(int id,DateTime currentDate, string name, int age, int height, string birthday, string placeofBirth)
+        /// <param name="id">ID</param>
+        /// <param name="currentDate">Текущая дата</param>
+        /// <param name="name">Имя</param>
+        /// <param name="age">Возраст</param>
+        /// <param name="height">Рост</param>
+        /// <param name="birthday">Дата рождения</param>
+        /// <param name="placeofBirth">Место рождения</param>
+        /// <param name="data">PersonData</param>
+        public Person(PersonData data)
         {
-            Id = id;
-            _name = name;
-            _age = age;
-            _height = height;
-            _birthday = birthday;
-            _placeOfBirth = placeofBirth;
-            CurrentDate = currentDate;
+            Id = data.Id;
+            _name = data.Name;
+            _age = data.Age;
+            _height = data.Height;
+            _birthday = data.Birthday;
+            _placeOfBirth = data.PlaceOfBirth;
+            CurrentDate = data.CurrentDate;
         }
 
         /// <summary>
@@ -43,5 +44,19 @@ namespace Dictionary
         /// <returns></returns>
         public override string ToString() =>
             $"{Id}#{CurrentDate}#{_name}#{_age}#{_height}#{_birthday}#{_placeOfBirth}";
+    }
+
+    /// <summary>
+    /// Структура для работы с Person
+    /// </summary>
+    public struct PersonData
+    {
+        public int Id;
+        public string Name;
+        public int Age;
+        public int Height;
+        public string Birthday;
+        public string PlaceOfBirth;
+        public DateTime CurrentDate;
     }
 }
