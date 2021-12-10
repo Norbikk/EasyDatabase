@@ -11,24 +11,6 @@ namespace Dictionary
         private const string Separator = "#";
 
         /// <summary>
-        /// Генерирует данные из консоли для дальнейшего использования
-        /// </summary>
-        /// <param name="path">путь к файлу</param>
-        /// <returns></returns>
-        public static string GeneratePersons(string path)
-        {
-            var person = PersonDataInput();
-            if (File.Exists(path) && File.ReadLines(path).Any()) //Если файл найден и есть строки
-                person.Id = int.Parse(File.ReadAllLines(path).Last(x => true).Split(Separator).First()) +
-                            1; //читаем все строки в документе, находим последний, делим на пробелы, находим первый символ, добавляем +1
-            else
-                person.Id = 1; //В противном случае номер равен 1
-
-            var memInfo = new Person(person); //Присваиваем его данные меминфо
-            return memInfo.ToString(); //Присваиваем данные + номер
-        }
-
-        /// <summary>
         /// Записывает полученный результат в файл
         /// </summary>
         /// <param name="path">путь к файлу</param>
@@ -72,7 +54,7 @@ namespace Dictionary
         /// <param name="id">Вписываемый айди</param>
         public static void ChangePerson(int id)
         {
-            var person = PersonDataInput();
+            var person = ConsoleWorker.PersonDataInput();
             person.Id = id + 1;
             _members[id] = new Person(person);
         }
@@ -92,7 +74,7 @@ namespace Dictionary
         /// </summary>
         /// <param name="startTime">Начальная дата</param>
         /// <param name="endTime">Конечная дата</param>
-        /// <returns></returns>
+        /// <returns>Возвращает строку листа человек в выбранном диапазоне дат</returns>
         public static string GetChosenDates(DateTime startTime, DateTime endTime)
         {
             string s = null;
@@ -148,27 +130,6 @@ namespace Dictionary
             SetNewIdPersons();
         }
 
-        /// <summary>
-        /// Ввод нового человека с консоли
-        /// </summary>
-        /// <returns></returns>
-        private static PersonData PersonDataInput()
-        {
-            var person = new PersonData();
-            Console.WriteLine("Введите ФИО:");
-            person.Name = Console.ReadLine();
-            Console.WriteLine("Введите рост:");
-            person.Height = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Введите дату рождения:");
-            DateTime birthdayDate = Convert.ToDateTime(Console.ReadLine());
-            person.Birthday = birthdayDate.ToShortDateString();
-            Console.WriteLine("Введите место рождения:");
-            person.PlaceOfBirth = Console.ReadLine();
-            person.CurrentDate = DateTime.Now;
-            person.Age = person.CurrentDate.Year - birthdayDate.Year;
-
-            return person;
-        }
 
         /// <summary>
         /// Удаляет выбранного человека из листа
