@@ -8,13 +8,14 @@ namespace Dictionary
     public class Notebook
     {
         private static List<Person> _members = new List<Person>(); //Инициализируем лист
+        private static ConsoleWorker _consoleWorker = new();
         private const string Separator = "#";
 
         /// <summary>
         /// Записывает полученный результат в файл
         /// </summary>
         /// <param name="path">путь к файлу</param>
-        public static void WriteInFile(string path)
+        public void WriteInFile(string path)
         {
             var streamWriter = new StreamWriter(path);
             for (var i = 0; i < _members.Count; i++)
@@ -29,7 +30,7 @@ namespace Dictionary
         /// Выводит информацию нужного персона
         /// </summary>
         /// <param name="id">Вписываемый айди</param>
-        public static string OutputPersonInfo(int id)
+        public string OutputPersonInfo(int id)
         {
             return _members[id].ToString();
         }
@@ -37,7 +38,7 @@ namespace Dictionary
         /// <summary>
         /// Выводит весь лист персонов
         /// </summary>
-        public static string OutputListPerson()
+        public string OutputListPerson()
         {
             string s = null;
             for (var i = 0; i < _members.Count; i++)
@@ -52,9 +53,9 @@ namespace Dictionary
         /// Заменяем персона на нового
         /// </summary>
         /// <param name="id">Вписываемый айди</param>
-        public static void ChangePerson(int id)
+        public void ChangePerson(int id)
         {
-            var person = ConsoleWorker.PersonDataInput();
+            var person = _consoleWorker.PersonDataInput();
             person.Id = id + 1;
             _members[id] = new Person(person);
         }
@@ -63,7 +64,7 @@ namespace Dictionary
         /// Удаляет человека и перенумировывает
         /// </summary>
         /// <param name="id">вписываемый айди</param>
-        public static void RemoveAndSetID(int id)
+        public void RemoveAndSetId(int id)
         {
             RemovePerson(id);
             SetNewIdPersons();
@@ -75,14 +76,14 @@ namespace Dictionary
         /// <param name="startTime">Начальная дата</param>
         /// <param name="endTime">Конечная дата</param>
         /// <returns>Возвращает строку листа человек в выбранном диапазоне дат</returns>
-        public static string GetChosenDates(DateTime startTime, DateTime endTime)
+        public string GetChosenDates(DateTime startTime, DateTime endTime)
         {
             string s = null;
             for (var i = 0; i < _members.Count; i++)
             {
                 if (_members[i].CurrentDate >= startTime && _members[i].CurrentDate <= endTime)
                 {
-                    s += _members[i].ToString() + "\n";
+                    s += _members[i] + "\n";
                 }
             }
 
@@ -92,7 +93,7 @@ namespace Dictionary
         /// <summary>
         /// Выгружаем из файла в лист
         /// </summary>
-        public static void AddPersonsFromFile(string path)
+        public void AddPersonsFromFile(string path)
         {
             var person = new PersonData();
             string[] lines = File.ReadAllLines(path);
@@ -115,7 +116,7 @@ namespace Dictionary
         /// <summary>
         /// Берет отсортированный по возрастанию лист с новыми ID
         /// </summary>
-        public static void GetSortedList()
+        public void GetSortedList()
         {
             ListSorting();
             SetNewIdPersons();
@@ -124,7 +125,7 @@ namespace Dictionary
         /// <summary>
         /// Берет отсортированный по убыванию лист с новыми ID
         /// </summary>
-        public static void GetSortedListDescend()
+        public void GetSortedListDescend()
         {
             ListSortingDescending();
             SetNewIdPersons();
@@ -135,7 +136,7 @@ namespace Dictionary
         /// Удаляет выбранного человека из листа
         /// </summary>
         /// <param name="id">вписываемый айди</param>
-        private static void RemovePerson(int id)
+        private void RemovePerson(int id)
         {
             _members.RemoveAt(id);
         }
@@ -143,7 +144,7 @@ namespace Dictionary
         /// <summary>
         /// Сортировка по возрастанию
         /// </summary>
-        private static void ListSorting()
+        private void ListSorting()
         {
             _members = _members.OrderBy(x => x.CurrentDate).ToList();
         }
@@ -151,7 +152,7 @@ namespace Dictionary
         /// <summary>
         /// Сортировка по убыванию
         /// </summary>
-        private static void ListSortingDescending()
+        private void ListSortingDescending()
         {
             _members = _members.OrderByDescending(x => x.CurrentDate).ToList();
         }
@@ -159,7 +160,7 @@ namespace Dictionary
         /// <summary>
         /// Выдает новые ID
         /// </summary>
-        private static void SetNewIdPersons()
+        private void SetNewIdPersons()
         {
             for (var i = 0; i < _members.Count; i++)
             {

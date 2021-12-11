@@ -4,22 +4,23 @@ using System.Linq;
 
 namespace Dictionary
 {
-    class ConsoleWorker
+    public class ConsoleWorker
     {
+        private static readonly Notebook Notebook = new();
         private const string Separator = "#";
 
         /// <summary>
         /// Ввод нового человека с консоли
         /// </summary>
         /// <returns>Возвращает сгенерированного персона</returns>
-        public static PersonData PersonDataInput()
+        internal PersonData PersonDataInput()
         {
             var person = new PersonData();
             Console.WriteLine("Введите ФИО:");
             person.Name = Console.ReadLine();
             Console.WriteLine("Введите рост:");
             person.Height = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Введите дату рождения:");
+            Console.WriteLine("Введите дату рождения(формат дд.мм.гггг):");
             DateTime birthdayDate = Convert.ToDateTime(Console.ReadLine());
             person.Birthday = birthdayDate.ToShortDateString();
             Console.WriteLine("Введите место рождения:");
@@ -33,7 +34,7 @@ namespace Dictionary
         /// <summary>
         /// Вывод программы в файл
         /// </summary>
-        internal static void WriteFromConsoleInFile(string path)
+        internal void WriteFromConsoleInFile(string path)
         {
             do //Выполняем до выхода из программы
             {
@@ -53,7 +54,7 @@ namespace Dictionary
         /// <summary>
         /// Выводит человека и предлагает дальнейшие действия
         /// </summary>
-        internal static void OutputPersonByIdAndWork()
+        internal void OutputPersonByIdAndWork()
         {
             Console.WriteLine("Введите ID который вывести");
             int id = Convert.ToInt32(Console.ReadLine()) - 1;
@@ -65,7 +66,7 @@ namespace Dictionary
         /// <summary>
         ///Выводит людей в выбранном диапазоне
         /// </summary>
-        internal static void ChosenDateSpanOutput()
+        internal void ChosenDateSpanOutput()
         {
             var dates = ChosenDateSpanByInput();
             Console.WriteLine(dates);
@@ -75,7 +76,7 @@ namespace Dictionary
         /// <summary>
         /// Выводит лист и предлагает сортировку
         /// </summary>
-        internal static void OutputPersonsAndSorting()
+        internal void OutputPersonsAndSorting()
         {
             var persons = OutputPersons();
             Console.WriteLine(persons);
@@ -88,7 +89,7 @@ namespace Dictionary
         /// </summary>
         /// <param name="path">путь к файлу</param>
         /// <returns>Возвращает Персона в строку</returns>
-        private static string GeneratePersons(string path)
+        private string GeneratePersons(string path)
         {
             var person = PersonDataInput();
             if (File.Exists(path) && File.ReadLines(path).Any()) //Если файл найден и есть строки
@@ -104,7 +105,7 @@ namespace Dictionary
         /// <summary>
         /// Выбранные даты
         /// </summary>
-        private static string ChosenDateSpanByInput()
+        private string ChosenDateSpanByInput()
         {
             var (startDate, endDate) = InputDates();
             var dates = Notebook.GetChosenDates(startDate, endDate);
@@ -115,11 +116,11 @@ namespace Dictionary
         /// При вводе в консоль получает даты
         /// </summary>
         /// <returns>Возвращает начальную и конечную дату</returns>
-        private static (DateTime startTime, DateTime endTime) InputDates()
+        private (DateTime startTime, DateTime endTime) InputDates()
         {
-            Console.WriteLine("Введите начальную дату");
+            Console.WriteLine("Введите начальную дату(формат дд.мм.гггг)");
             var startDate = Convert.ToDateTime(Console.ReadLine());
-            Console.WriteLine("Введите конечную дату");
+            Console.WriteLine("Введите конечную дату(формат дд.мм.гггг)");
             var endDate = Convert.ToDateTime(Console.ReadLine());
 
             return (startDate, endDate);
@@ -129,7 +130,7 @@ namespace Dictionary
         /// <summary>
         /// метод вывода в консоль информации по человеку
         /// </summary>
-        private static string OutputPersonById(int id)
+        private string OutputPersonById(int id)
         {
             string result = Notebook.OutputPersonInfo(id);
 
@@ -139,7 +140,7 @@ namespace Dictionary
         /// <summary>
         /// Возвращает лист лист в строку
         /// </summary>
-        private static string OutputPersons()
+        private string OutputPersons()
         {
             var output = Notebook.OutputListPerson();
             return output;
@@ -148,7 +149,7 @@ namespace Dictionary
         /// <summary>
         /// Выполняет сортировку по нажатию и возвращает в строку отсортированный лист
         /// </summary>
-        private static string AskAboutSorting()
+        private string AskAboutSorting()
         {
             Console.WriteLine("1- Сортировать по возрастанию\n2-Сортировать по убыванию");
             var input = Console.ReadKey().Key;
@@ -160,7 +161,11 @@ namespace Dictionary
                 case ConsoleKey.D2:
                     Notebook.GetSortedListDescend();
                     break;
+                default:
+                    Console.WriteLine("Ввод только 1 или 2. Список не отсортирован.");
+                    break;
             }
+
 
             var output = Notebook.OutputListPerson();
             return output;
@@ -170,7 +175,7 @@ namespace Dictionary
         /// Выполняет предложенные действия по нажатию
         /// </summary>
         /// <param name="id">Вписываемый айди</param>
-        private static void AskWork(int id)
+        private void AskWork(int id)
         {
             Console.WriteLine("1-Редактировать данного человека\n2-Удалить данного человека\n3-Вывести таблицу");
             var input = Console.ReadKey().Key;
@@ -186,6 +191,9 @@ namespace Dictionary
                 case ConsoleKey.D3:
                     AskOutputInfo();
                     break;
+                default:
+                    Console.WriteLine("Ввод только от 1 до 3");
+                    break;
             }
         }
 
@@ -193,13 +201,13 @@ namespace Dictionary
         /// Спрашивает удалить ли позицию
         /// </summary>
         /// <param name="id">номер позиции</param>
-        private static void AskRemoveOrNot(int id)
+        private void AskRemoveOrNot(int id)
         {
             Console.WriteLine("Удалить? Y/N");
             var consoleKeyInfo = Console.ReadKey().Key;
             if (consoleKeyInfo == ConsoleKey.Y)
             {
-                Notebook.RemoveAndSetID(id);
+                Notebook.RemoveAndSetId(id);
                 Console.WriteLine("\nДанный человек удален из списка");
             }
         }
@@ -207,7 +215,7 @@ namespace Dictionary
         /// <summary>
         /// Спрашивает вывести ли список
         /// </summary>
-        private static void AskOutputInfo()
+        private void AskOutputInfo()
         {
             Console.WriteLine("Вывести список? Y/N");
             var consoleKeyInfo = Console.ReadKey().Key;

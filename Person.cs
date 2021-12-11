@@ -44,9 +44,8 @@ namespace Dictionary
         /// <returns>Возвращает данные в строку с разделителем</returns>
         public override string ToString() =>
             $"{Id}#{CurrentDate}#{_name}#{_age}#{_height}#{_birthday}#{_placeOfBirth}";
-        
     }
-    
+
     /// <summary>
     /// Структура для работы с Person
     /// </summary>
